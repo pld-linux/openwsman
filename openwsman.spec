@@ -12,8 +12,11 @@ Source0:	http://dl.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
 # Source0-md5:	25a135bea7c1653f66b2428c4b252d3a
 URL:		http://www.openwsman.org/project/openwsman
 BuildRequires:	curl-devel
+BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	openssl-devel
+BuildRequires:	pam-devel
+BuildRequires:	pkgconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
