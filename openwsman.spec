@@ -3,12 +3,13 @@
 # - daemon init script
 #
 Summary:	Implementation of the Web Services Management specification (WS-Management)
+Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.1.0
 Release:	0.1
 License:	BSD
 Group:		Libraries
-Source0:	http://dl.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
+Source0:	http://downloads.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
 # Source0-md5:	25a135bea7c1653f66b2428c4b252d3a
 URL:		http://www.openwsman.org/project/openwsman
 BuildRequires:	curl-devel
@@ -17,6 +18,7 @@ BuildRequires:	libxml2-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
+BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -28,26 +30,43 @@ is based on a suite of web services specifications and usage
 requirements that exposes a set of operations focused on and covers
 all system management aspects.
 
+%description -l pl.UTF-8
+Openwsman to projekt, którego celem jest zapewnienie mającej otwarte
+źródła implementacji specyfikacji Web Services Management
+(WS-Management) i udostępnienie informacji związanych z zarządzaniem
+systemem pod Linuksem poprzez protokół WS-Management. WS-Management
+jest oparty na zbiorze specyfikacji i wymaganiach usług WWW,
+udostępniających zbiór operacji pokrywających wszystkie aspekty
+zarządzania systemem.
+
 %package devel
-Summary:	Header files and develpment documentation for openwsman
+Summary:	Header files for openwsman
+Summary(pl.UTF-8):	Pliki nagłówkowe openwsman
 Group:		Development/Libraries
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Header files and openwsman documentation.
+Header files for openwsman.
+
+%description devel -l pl.UTF-8
+Pliki nagłówkowe openwsman.
 
 %package static
-Summary:	Static openwsman library
+Summary:	Static openwsman libraries
+Summary(pl.UTF-8):	Statyczne biblioteki openwsman
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static openwsman libraries.
 
+%description static -l pl.UTF-8
+Statyczne biblioteki openwsman.
+
 %prep
 %setup -q
 
-sed -i -e 's#-Werror##g' configure* *.m4
+%{__sed} -i -e 's#-Werror##g' configure* *.m4
 
 %build
 %configure
