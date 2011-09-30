@@ -1,7 +1,5 @@
 # TODO:
-# - libs subpackage
 # - daemon init script
-# - package perl and python
 # - fix and package java and ruby
 #
 Summary:	Implementation of the Web Services Management specification (WS-Management)
@@ -21,11 +19,16 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
+BuildRequires:	perl-devel
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.566
+BuildRequires:	python-devel
+BuildRequires:	rpmbuild(macros) >= 1.606
 BuildRequires:	sblim-sfcc-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	swig >= 1.3.30
+BuildRequires:	swig-perl >= 1.3.30
+BuildRequires:	swig-python >= 1.3.30
+Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # plugins use symbols from libraries, client libs have circular dependencies with libwsman
@@ -49,11 +52,23 @@ jest oparty na zbiorze specyfikacji i wymaganiach usług WWW,
 udostępniających zbiór operacji pokrywających wszystkie aspekty
 zarządzania systemem.
 
+%package libs
+Summary:	Shared openwsman libraries
+Summary(pl.UTF-8):	Biblioteki współdzielone openwsman
+Group:		Libraries
+Conflicts:	openwsman < 2.2.6
+
+%description libs
+Shared openwsman libraries.
+
+%description libs -l pl.UTF-8
+Biblioteki współdzielone openwsman.
+
 %package devel
 Summary:	Header files for openwsman
 Summary(pl.UTF-8):	Pliki nagłówkowe openwsman
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
 Obsoletes:	openwsman-static
 
 %description devel
@@ -61,6 +76,30 @@ Header files for openwsman.
 
 %description devel -l pl.UTF-8
 Pliki nagłówkowe openwsman.
+
+%package -n perl-openwsman
+Summary:	Perl bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania Perla do bibliotek openwsman
+Group:		Development/Languages/Perl
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description -n perl-openwsman
+Perl bindings for openwsman libraries.
+
+%description -n perl-openwsman -l pl.UTF-8
+Wiązania Perla do bibliotek openwsman.
+
+%package -n python-openwsman
+Summary:	Python bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania Pythona do bibliotek openwsman
+Group:		Development/Languages/Python
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description -n python-openwsman
+Python bindings for openwsman libraries.
+
+%description -n python-openwsman -l pl.UTF-8
+Wiązania Pythona do bibliotek openwsman.
 
 %prep
 %setup -q
@@ -82,26 +121,20 @@ install -d $RPM_BUILD_ROOT/var/lib/openwsman/subscriptions
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+%py_comp $RPM_BUILD_ROOT%{py_sitedir}
+%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
+%py_postclean
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog README TODO
 %attr(755,root,root) %{_sbindir}/openwsmand
-%attr(755,root,root) %{_libdir}/libwsman.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman.so.1
-%attr(755,root,root) %{_libdir}/libwsman_client.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.1
-%attr(755,root,root) %{_libdir}/libwsman_clientpp.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_clientpp.so.1
-%attr(755,root,root) %{_libdir}/libwsman_curl_client_transport.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_curl_client_transport.so.1
-%attr(755,root,root) %{_libdir}/libwsman_server.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_server.so.1
 %dir %{_libdir}/openwsman
 %dir %{_libdir}/openwsman/authenticators
 %attr(755,root,root) %{_libdir}/openwsman/authenticators/libwsman_*.so*
@@ -114,6 +147,19 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/openwsman
 /var/lib/openwsman
 
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libwsman.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libwsman.so.1
+%attr(755,root,root) %{_libdir}/libwsman_client.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.1
+%attr(755,root,root) %{_libdir}/libwsman_clientpp.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libwsman_clientpp.so.1
+%attr(755,root,root) %{_libdir}/libwsman_curl_client_transport.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libwsman_curl_client_transport.so.1
+%attr(755,root,root) %{_libdir}/libwsman_server.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libwsman_server.so.1
+
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libwsman.so
@@ -125,3 +171,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/openwsman.pc
 %{_pkgconfigdir}/openwsman++.pc
 %{_pkgconfigdir}/openwsman-server.pc
+
+%files -n perl-openwsman
+%defattr(644,root,root,755)
+%attr(755,root,root) %{perl_vendorarch}/openwsman.so
+%{perl_vendorlib}/openwsman.pm
+
+%files -n python-openwsman
+%defattr(644,root,root,755)
+%attr(755,root,root) %{py_sitedir}/_pywsman.so
+%{py_sitedir}/pywsman.py[co]
