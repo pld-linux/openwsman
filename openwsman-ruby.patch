@@ -1,0 +1,75 @@
+--- openwsman-2.2.6/bindings/ruby/helpers.c.orig	2011-04-20 13:23:03.000000000 +0200
++++ openwsman-2.2.6/bindings/ruby/helpers.c	2011-09-30 21:40:44.696634545 +0200
+@@ -147,7 +147,7 @@
+     VALUE result = rb_funcall( TRANSPORT_CLASS.klass, rb_intern( "auth_request_callback" ), 2, c, INT2NUM( t ) );
+ 
+     if (CLASS_OF( result ) == rb_cArray) {
+-	if (RARRAY(result)->len == 2 ) {
++	if (RARRAY_LEN(result) == 2 ) {
+ 	    VALUE first = rb_ary_entry( result, 0 );
+ 	    VALUE second = rb_ary_entry( result, 1 );
+ 	    if ((TYPE( first ) == T_STRING)
+--- openwsman-2.2.6/src/plugins/swig/src/target_ruby.c.orig	2011-04-20 13:23:04.000000000 +0200
++++ openwsman-2.2.6/src/plugins/swig/src/target_ruby.c	2011-10-01 07:06:25.661104347 +0200
+@@ -284,7 +284,7 @@
+ 	  return 1;
+ 	}
+   
+-      len = RARRAY(resulta)->len;
++      len = RARRAY_LEN(resulta);
+       if (len > 0) 
+ 	{
+ 	  VALUE code = rb_ary_entry(resulta, 0);
+@@ -375,24 +375,24 @@
+     if (NIL_P(ary)) {
+       rb_raise( rb_eArgError, "namespaces is not array", klass);
+     }
+-    int len = RARRAY(ary)->len;
++    int len = RARRAY_LEN(ary);
+     if (len <= 0) {
+       rb_raise( rb_eArgError, "namespaces returned array with %d elements", klass, len);
+     }
+     int i;
+     for (i = 0; i < len; ++i) {
+       lnode_t *node;
+-      VALUE elem = RARRAY(ary)->ptr[i];
++      VALUE elem = RARRAY_PTR(ary)[i];
+       VALUE pair = rb_check_array_type( elem );
+       if (NIL_P(pair)) {
+ 	rb_raise( rb_eArgError, "namespaces must return array of arrays", klass);
+       }
+-      if (RARRAY(pair)->len != 2) {
++      if (RARRAY_LEN(pair) != 2) {
+ 	rb_raise( rb_eArgError, "namespaces must return array of ['<namespace>','<class_prefix>']", klass);
+       }
+       WsSupportedNamespaces *ns = (WsSupportedNamespaces *)u_malloc(sizeof(WsSupportedNamespaces));
+-      ns->ns = StringValuePtr( RARRAY(pair)->ptr[0] );
+-      ns->class_prefix = StringValuePtr( RARRAY(pair)->ptr[1] );
++      ns->ns = StringValuePtr( RARRAY_PTR(pair)[0] );
++      ns->class_prefix = StringValuePtr( RARRAY_PTR(pair)[1] );
+       node = lnode_create(ns);
+       list_append(namespaces, node);
+     }
+--- openwsman-2.2.6/bindings/ruby/CMakeLists.txt.orig	2011-04-20 13:23:03.000000000 +0200
++++ openwsman-2.2.6/bindings/ruby/CMakeLists.txt	2011-10-01 06:34:06.741039424 +0200
+@@ -58,20 +58,6 @@
+ 	PATTERN ".svn" EXCLUDE
+ 	PATTERN "Makefile.am" EXCLUDE)
+ 
+-# rdoc
+-SET(rdoc_dir "${CMAKE_CURRENT_BINARY_DIR}/html")
+-ADD_CUSTOM_COMMAND (
+-   OUTPUT ${rdoc_dir}
+-   COMMAND ${CMAKE_COMMAND} -E echo_append "Creating rdoc documentation ..."
+-   COMMAND rm -rf ${rdoc_dir}
+-   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/rdoc -o ${rdoc_dir} openwsman.i *.i
+-   COMMAND ${CMAKE_COMMAND} -E echo "Done."
+-   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bindings
+-   DEPENDS ${CMAKE_SOURCE_DIR}/bindings/*.i
+-)
+-ADD_CUSTOM_TARGET(ruby_rdoc ALL DEPENDS "${rdoc_dir}")
+-ADD_DEPENDENCIES(ruby_rdoc rbwsman)
+-
+ #
+ # Leave this to %doc in the .spec file
+ #INSTALL(DIRECTORY "${rdoc_dir}" DESTINATION ${DOC_INSTALL_DIR})

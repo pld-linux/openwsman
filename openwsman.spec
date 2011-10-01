@@ -1,7 +1,6 @@
 # TODO:
 # - daemon init script
-# - fix and package java and ruby
-#
+# - where should arch-dependent .jar be packaged?
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
@@ -12,9 +11,12 @@ Group:		Libraries
 Source0:	http://downloads.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
 # Source0-md5:	55b59e467630e00b958a0231942b686f
 Patch0:		%{name}-link.patch
+Patch1:		%{name}-ruby.patch
+Patch2:		%{name}-java.patch
 URL:		http://www.openwsman.org/project/openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
+BuildRequires:	jdk
 BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	openssl-devel
@@ -23,6 +25,7 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	rpmbuild(macros) >= 1.606
+BuildRequires:	ruby-devel >= 1.9
 BuildRequires:	sblim-sfcc-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	swig >= 1.3.30
@@ -77,6 +80,19 @@ Header files for openwsman.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe openwsman.
 
+%package -n java-openwsman
+Summary:	Java bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania Javy do bibliotek openwsman
+Group:		Libraries/Java
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	jre
+
+%description -n java-openwsman
+Java bindings for openwsman libraries.
+
+%description -n java-openwsman -l pl.UTF-8
+Wiązania Javy do bibliotek openwsman.
+
 %package -n perl-openwsman
 Summary:	Perl bindings for openwsman libraries
 Summary(pl.UTF-8):	Wiązania Perla do bibliotek openwsman
@@ -92,8 +108,9 @@ Wiązania Perla do bibliotek openwsman.
 %package -n python-openwsman
 Summary:	Python bindings for openwsman libraries
 Summary(pl.UTF-8):	Wiązania Pythona do bibliotek openwsman
-Group:		Development/Languages/Python
+Group:		Libraries/Python
 Requires:	%{name}-libs = %{version}-%{release}
+%pyrequires_eq	python-libs
 
 %description -n python-openwsman
 Python bindings for openwsman libraries.
@@ -101,18 +118,35 @@ Python bindings for openwsman libraries.
 %description -n python-openwsman -l pl.UTF-8
 Wiązania Pythona do bibliotek openwsman.
 
+%package -n ruby-openwsman
+Summary:	Ruby bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania języka Ruby do bibliotek openwsman
+Group:		Development/Languages
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	ruby
+
+%description -n ruby-openwsman
+Ruby bindings for openwsman libraries.
+
+%description -n ruby-openwsman -l pl.UTF-8
+Wiązania języka Ruby do bibliotek openwsman.
+
 %prep
 %setup -q
 %undos src/cpp/CMakeLists.txt
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+
+%{__sed} -i -e 's,rubyio\.h,ruby/io.h,' \
+	bindings/openwsman.i \
+	src/plugins/swig/plugin.i
 
 %build
 install -d build
 cd build
 %cmake .. \
-	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
-	-DBUILD_JAVA=NO \
-	-DBUILD_RUBY=NO
+	-DPACKAGE_ARCHITECTURE=%{_target_cpu}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -172,6 +206,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/openwsman++.pc
 %{_pkgconfigdir}/openwsman-server.pc
 
+%files -n java-openwsman
+%defattr(644,root,root,755)
+%{_javadir}/openwsman-%{_target_cpu}-%{version}.jar
+
 %files -n perl-openwsman
 %defattr(644,root,root,755)
 %attr(755,root,root) %{perl_vendorarch}/openwsman.so
@@ -181,3 +219,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/_pywsman.so
 %{py_sitedir}/pywsman.py[co]
+
+%files -n ruby-openwsman
+%defattr(644,root,root,755)
+%attr(755,root,root) %{ruby_sitearchdir}/openwsman.so
+%{ruby_sitelibdir}/openwsmanplugin.rb
+%{ruby_sitelibdir}/openwsman

@@ -1,0 +1,10 @@
+--- openwsman-2.2.6/bindings/java/CMakeLists.txt.orig	2011-04-20 13:23:03.000000000 +0200
++++ openwsman-2.2.6/bindings/java/CMakeLists.txt	2011-10-01 08:29:33.064604676 +0200
+@@ -34,6 +34,7 @@
+    COMMAND ${CMAKE_COMMAND} -E echo_append "Creating JAR ..."
+    COMMAND ${JAVA_ARCHIVE} cvf ${jar_NAME} *.so org/*
+    DEPENDS ${SWIG_OUTPUT}
++   DEPENDS jwsman
+ )
+ 
+ ADD_CUSTOM_TARGET ( jwsman_all ALL
