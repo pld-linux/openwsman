@@ -31,6 +31,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	swig >= 1.3.30
 BuildRequires:	swig-perl >= 1.3.30
 BuildRequires:	swig-python >= 1.3.30
+BuildRequires:	swig-ruby >= 1.3.30
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -146,7 +147,8 @@ Wiązania języka Ruby do bibliotek openwsman.
 install -d build
 cd build
 %cmake .. \
-	-DPACKAGE_ARCHITECTURE=%{_target_cpu}
+	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
+	-DJAVA_INCLUDE_PATH=%{java_home}/include
 
 %install
 rm -rf $RPM_BUILD_ROOT
