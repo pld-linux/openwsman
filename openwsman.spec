@@ -5,7 +5,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.2.6
-Release:	3
+Release:	4
 License:	BSD
 Group:		Libraries
 Source0:	http://downloads.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
@@ -148,6 +148,7 @@ install -d build
 cd build
 %cmake .. \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
+	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 	-DJAVA_INCLUDE_PATH=%{java_home}/include
 
 %install
@@ -224,6 +225,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n ruby-openwsman
 %defattr(644,root,root,755)
-%attr(755,root,root) %{ruby_sitearchdir}/openwsman.so
-%{ruby_sitelibdir}/openwsmanplugin.rb
-%{ruby_sitelibdir}/openwsman
+%attr(755,root,root) %{ruby_vendorarchdir}/openwsman.so
+%{ruby_vendorlibdir}/openwsmanplugin.rb
+%{ruby_vendorlibdir}/openwsman
