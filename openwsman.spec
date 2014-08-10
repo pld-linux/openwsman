@@ -1,6 +1,24 @@
 # TODO:
 # - daemon init script
 # - where should arch-dependent .jar be packaged?
+# - more bconds:
+#OPTION( BUILD_LIBCIM "Build CIM plugin" YES )
+#OPTION( BUILD_EXAMPLES "Build examples" YES )
+#OPTION( BUILD_PYTHON "Build Python bindings" YES )
+#OPTION( BUILD_RUBY "Build Ruby bindings" YES )
+#OPTION( BUILD_PERL "Build Perl bindings" YES )
+#OPTION( BUILD_CSHARP "Build C# bindings" YES)
+#OPTION( BUILD_CUNIT_TESTS "Build serialization tests" NO )
+#OPTION( DISABLE_PLUGINS "Do not build plugins" NO )
+#OPTION( BUILD_SWIG_PLUGIN "Build SWIG plugin" YES )
+#OPTION( DISABLE_SERVER "Do not build server component" NO )
+#OPTION( ENABLE_EVENTING_SUPPORT "WS-Eventing wanted" YES )
+#OPTION( ENABLE_IPV6 "Enable IPv6 support" YES )
+
+#
+# Conditional build:
+%bcond_without	java	# build without Java bindings
+
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
@@ -149,7 +167,11 @@ cd build
 %cmake .. \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
-	-DJAVA_INCLUDE_PATH=%{java_home}/include
+%if %{with java}
+	-DJAVA_INCLUDE_PATH=%{java_home}/include \
+%else
+	-DBUILD_JAVA=NO \
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -209,9 +231,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/openwsman++.pc
 %{_pkgconfigdir}/openwsman-server.pc
 
+%if %{with java}
 %files -n java-openwsman
 %defattr(644,root,root,755)
 %{_javadir}/openwsman-%{_target_cpu}-%{version}.jar
+%endif
 
 %files -n perl-openwsman
 %defattr(644,root,root,755)
