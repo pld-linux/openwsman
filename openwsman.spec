@@ -5,7 +5,6 @@
 #OPTION( BUILD_LIBCIM "Build CIM plugin" YES )
 #OPTION( BUILD_EXAMPLES "Build examples" YES )
 #OPTION( BUILD_PYTHON "Build Python bindings" YES )
-#OPTION( BUILD_RUBY "Build Ruby bindings" YES )
 #OPTION( BUILD_PERL "Build Perl bindings" YES )
 #OPTION( BUILD_CSHARP "Build C# bindings" YES)
 #OPTION( BUILD_CUNIT_TESTS "Build serialization tests" NO )
@@ -18,6 +17,7 @@
 #
 # Conditional build:
 %bcond_without	java	# build without Java bindings
+%bcond_without	ruby	# build without Ruby bindings
 
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
@@ -165,13 +165,14 @@ Wiązania języka Ruby do bibliotek openwsman.
 install -d build
 cd build
 %cmake .. \
-	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
-	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 %if %{with java}
 	-DJAVA_INCLUDE_PATH=%{java_home}/include \
 %else
 	-DBUILD_JAVA=NO \
 %endif
+	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
+	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
+	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -247,8 +248,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/_pywsman.so
 %{py_sitedir}/pywsman.py[co]
 
+%if %{with ruby}
 %files -n ruby-openwsman
 %defattr(644,root,root,755)
 %attr(755,root,root) %{ruby_vendorarchdir}/openwsman.so
 %{ruby_vendorlibdir}/openwsmanplugin.rb
 %{ruby_vendorlibdir}/openwsman
+%endif
