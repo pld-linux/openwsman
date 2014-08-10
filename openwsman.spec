@@ -1,6 +1,7 @@
 # TODO:
 # - daemon init script
 # - where should arch-dependent .jar be packaged?
+# - add -module to plugins build?
 # - more bconds:
 #OPTION( BUILD_LIBCIM "Build CIM plugin" YES )
 #OPTION( BUILD_EXAMPLES "Build examples" YES )
@@ -22,16 +23,16 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.2.6
-Release:	4
+Version:	2.4.6
+Release:	1
 License:	BSD
 Group:		Libraries
-Source0:	http://downloads.sourceforge.net/openwsman/%{name}-%{version}.tar.bz2
-# Source0-md5:	55b59e467630e00b958a0231942b686f
+Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	02902aafcd58708c0cdab51af9f4086e
 Patch0:		%{name}-link.patch
-Patch1:		%{name}-ruby.patch
-Patch2:		%{name}-java.patch
-URL:		http://www.openwsman.org/project/openwsman
+Patch1:		%{name}-java.patch
+Patch2:		rdoc-rubygems.patch
+URL:		https://github.com/Openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
 BuildRequires:	jdk
@@ -54,7 +55,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # plugins use symbols from libraries, client libs have circular dependencies with libwsman
-%define		skip_post_check_so	.*%{_libdir}/openwsman/.* libwsman_client.so.* libwsman_curl_client_transport.so.*
+%define		skip_post_check_so	.*%{_libdir}/openwsman/.* libwsman_client.so.* libwsman_curl_client_transport.so.* libwsman_server.so.1.0.0 libwsman_clientpp.so.1.0.0
 
 %description
 Openwsman is a project intended to provide an open-source
@@ -129,7 +130,7 @@ Summary:	Python bindings for openwsman libraries
 Summary(pl.UTF-8):	Wiązania Pythona do bibliotek openwsman
 Group:		Libraries/Python
 Requires:	%{name}-libs = %{version}-%{release}
-%pyrequires_eq	python-libs
+Requires:	python-libs
 
 %description -n python-openwsman
 Python bindings for openwsman libraries.
@@ -157,10 +158,6 @@ Wiązania języka Ruby do bibliotek openwsman.
 %patch1 -p1
 %patch2 -p1
 
-%{__sed} -i -e 's,rubyio\.h,ruby/io.h,' \
-	bindings/openwsman.i \
-	src/plugins/swig/plugin.i
-
 %build
 install -d build
 cd build
@@ -173,6 +170,8 @@ cd build
 	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
+
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -193,26 +192,27 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog README TODO
+%doc AUTHORS ChangeLog README.md TODO
 %attr(755,root,root) %{_sbindir}/openwsmand
 %dir %{_libdir}/openwsman
 %dir %{_libdir}/openwsman/authenticators
 %attr(755,root,root) %{_libdir}/openwsman/authenticators/libwsman_*.so*
 %dir %{_libdir}/openwsman/plugins
 %attr(755,root,root) %{_libdir}/openwsman/plugins/libwsman_*.so*
+%attr(755,root,root) %{_libdir}/openwsman/plugins/libredirect.so*
 %dir %{_sysconfdir}/openwsman
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/openwsman.conf
 %attr(754,root,root) %{_sysconfdir}/openwsman/owsmangencert.sh
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/ssleay.cnf
 %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/openwsman
-/var/lib/openwsman
+%dir /var/lib/openwsman
 
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libwsman.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman.so.1
 %attr(755,root,root) %{_libdir}/libwsman_client.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.1
+%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.2
 %attr(755,root,root) %{_libdir}/libwsman_clientpp.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman_clientpp.so.1
 %attr(755,root,root) %{_libdir}/libwsman_curl_client_transport.so.*.*.*
@@ -240,18 +240,19 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n perl-openwsman
 %defattr(644,root,root,755)
-%attr(755,root,root) %{perl_vendorarch}/openwsman.so
 %{perl_vendorlib}/openwsman.pm
+%attr(755,root,root) %{perl_vendorarch}/openwsman.so
 
 %files -n python-openwsman
 %defattr(644,root,root,755)
-%attr(755,root,root) %{py_sitedir}/_pywsman.so
 %{py_sitedir}/pywsman.py[co]
+%attr(755,root,root) %{py_sitedir}/_pywsman.so
 
 %if %{with ruby}
 %files -n ruby-openwsman
 %defattr(644,root,root,755)
-%attr(755,root,root) %{ruby_vendorarchdir}/openwsman.so
 %{ruby_vendorlibdir}/openwsmanplugin.rb
+%{ruby_vendorlibdir}/openwsman.rb
 %{ruby_vendorlibdir}/openwsman
+%attr(755,root,root) %{ruby_vendorarchdir}/_openwsman.so
 %endif

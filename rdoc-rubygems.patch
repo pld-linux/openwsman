@@ -1,0 +1,8 @@
+--- openwsman-2.4.6/bindings/ruby/rdoc2.0~	2014-05-20 10:54:21.000000000 +0300
++++ openwsman-2.4.6/bindings/ruby/rdoc2.0	2014-08-11 00:05:27.200706518 +0300
+@@ -1,4 +1,5 @@
+ #!/usr/bin/env ruby
++require 'rubygems'
+ require 'rdoc'
+ 
+ require 'rdoc/encoding'

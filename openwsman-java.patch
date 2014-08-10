@@ -8,14 +8,3 @@
  )
  
  ADD_CUSTOM_TARGET ( jwsman_all ALL
---- openwsman-2.2.6/bindings/java/CMakeLists.txt~	2013-06-13 09:10:15.910113378 +0200
-+++ openwsman-2.2.6/bindings/java/CMakeLists.txt	2013-06-13 09:32:56.695027687 +0200
-@@ -30,7 +30,7 @@
-    OUTPUT ${jar_NAME}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Compiling Java files ..."
--   COMMAND ${JAVA_COMPILE} -target 1.5 -d . *.java
-+   COMMAND ${JAVA_COMPILE} -d . *.java
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Creating JAR ..."
-    COMMAND ${JAVA_ARCHIVE} cvf ${jar_NAME} *.so org/*
-    DEPENDS ${SWIG_OUTPUT}
