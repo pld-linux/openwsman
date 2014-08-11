@@ -171,7 +171,7 @@ cd build
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
 
-%{__make}
+%{__make} -j1
 
 %install
 rm -rf $RPM_BUILD_ROOT
