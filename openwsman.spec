@@ -206,6 +206,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/ssleay.cnf
 %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/openwsman
 %dir /var/lib/openwsman
+%dir /var/lib/openwsman/subscriptions
 
 %files libs
 %defattr(644,root,root,755)
