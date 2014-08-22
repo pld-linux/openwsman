@@ -2,23 +2,13 @@
 # - daemon init script
 # - where should arch-dependent .jar be packaged?
 # - add -module to plugins build?
-# - more bconds:
-#OPTION( BUILD_LIBCIM "Build CIM plugin" YES )
-#OPTION( BUILD_EXAMPLES "Build examples" YES )
-#OPTION( BUILD_PYTHON "Build Python bindings" YES )
-#OPTION( BUILD_PERL "Build Perl bindings" YES )
-#OPTION( BUILD_CSHARP "Build C# bindings" YES)
-#OPTION( BUILD_CUNIT_TESTS "Build serialization tests" NO )
-#OPTION( DISABLE_PLUGINS "Do not build plugins" NO )
-#OPTION( BUILD_SWIG_PLUGIN "Build SWIG plugin" YES )
-#OPTION( DISABLE_SERVER "Do not build server component" NO )
-#OPTION( ENABLE_EVENTING_SUPPORT "WS-Eventing wanted" YES )
-#OPTION( ENABLE_IPV6 "Enable IPv6 support" YES )
-
 #
 # Conditional build:
-%bcond_without	java	# build without Java bindings
-%bcond_without	ruby	# build without Ruby bindings
+%bcond_without	cim	# CIM plugin (sblim-sfcc based)
+%bcond_without	java	# Java bindings
+%bcond_without	perl	# Perl bindings
+%bcond_without	python	# Python bindings
+%bcond_without	ruby	# Ruby bindings
 
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
@@ -35,22 +25,27 @@ Patch2:		rdoc-rubygems.patch
 URL:		https://github.com/Openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
+%if %{with ruby}
+%if %(locale -a | grep -q '^en_US$'; echo $?)
+BuildRequires:	glibc-localedb-all
+%endif
+%endif
 BuildRequires:	jdk
 BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
-BuildRequires:	perl-devel
+%{?with_perl:BuildRequires:	perl-devel}
 BuildRequires:	pkgconfig
-BuildRequires:	python-devel
+%{?with_python:BuildRequires:	python-devel}
 BuildRequires:	rpmbuild(macros) >= 1.606
-BuildRequires:	ruby-devel >= 1.9
-BuildRequires:	sblim-sfcc-devel
+%{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
+%{?with_cim:BuildRequires:	sblim-sfcc-devel}
 BuildRequires:	sed >= 4.0
 BuildRequires:	swig >= 1.3.30
-BuildRequires:	swig-perl >= 1.3.30
-BuildRequires:	swig-python >= 1.3.30
-BuildRequires:	swig-ruby >= 1.3.30
+%{?with_perl:BuildRequires:	swig-perl >= 1.3.30}
+%{?with_python:BuildRequires:	swig-python >= 1.3.30}
+%{?with_ruby:BuildRequires:	swig-ruby >= 1.3.30}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -167,10 +162,15 @@ cd build
 %else
 	-DBUILD_JAVA=NO \
 %endif
+	%{!?with_cim:-DBUILD_LIBCIM=NO} \
+	%{!?with_perl:-DBUILD_PERL=NO} \
+	%{!?with_python:-DBUILD_PYTHON=NO} \
 	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
 
+# ruby .gemspec contains non-ascii characters, build fails with C locale
+%{?with_ruby:LC_ALL=en_US} \
 %{__make} -j1
 
 %install
