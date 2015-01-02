@@ -10,10 +10,6 @@
 %bcond_without	python	# Python bindings
 %bcond_without	ruby	# Ruby bindings
 
-%ifarch x32
-%undefine	with_ruby
-%endif
-
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
