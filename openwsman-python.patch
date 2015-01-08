@@ -1,0 +1,13 @@
+--- openwsman-2.4.12/CMakeLists.txt.orig	2014-10-28 16:04:47.000000000 +0100
++++ openwsman-2.4.12/CMakeLists.txt	2015-01-08 20:53:14.732880349 +0100
+@@ -174,9 +174,9 @@
+ 
+ IF( BUILD_PYTHON )
+   MESSAGE(STATUS "Building Python bindings" )
++  FIND_PACKAGE(PythonInterp REQUIRED)
+   FIND_PACKAGE(PythonLibs)
+   IF (PYTHON_LIBRARY)
+-    FIND_PACKAGE(PythonInterp REQUIRED)
+     MESSAGE(STATUS "Found PythonLibs...")
+     FIND_PACKAGE(PythonLinkLibs)
+     IF (PYTHON_LINK_LIBS)

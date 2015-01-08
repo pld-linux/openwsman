@@ -13,15 +13,16 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.4.6
-Release:	2
+Version:	2.4.12
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	02902aafcd58708c0cdab51af9f4086e
+# Source0-md5:	4893a41c6fd89b33095c315c79638a75
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-java.patch
 Patch2:		rdoc-rubygems.patch
+Patch3:		%{name}-python.patch
 URL:		https://github.com/Openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
@@ -37,8 +38,7 @@ BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 BuildRequires:	pkgconfig
-%{?with_python:BuildRequires:	python-devel}
-%{?with_python:BuildConflicts:	python3-devel}
+%{?with_python:BuildRequires:	python-devel >= 2}
 BuildRequires:	rpmbuild(macros) >= 1.606
 %{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
 %{?with_cim:BuildRequires:	sblim-sfcc-devel}
@@ -153,6 +153,7 @@ Wiązania języka Ruby do bibliotek openwsman.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 install -d build
@@ -167,8 +168,9 @@ cd build
 	%{!?with_perl:-DBUILD_PERL=NO} \
 	%{!?with_python:-DBUILD_PYTHON=NO} \
 	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
-	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
+	-DPYTHON_EXECUTABLE=%{__python} \
+	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON
 
 # ruby .gemspec contains non-ascii characters, build fails with C locale
 %{?with_ruby:LC_ALL=en_US} \
@@ -203,6 +205,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/openwsman/plugins/libredirect.so*
 %dir %{_sysconfdir}/openwsman
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/openwsman.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/openwsman_client.conf
 %attr(754,root,root) %{_sysconfdir}/openwsman/owsmangencert.sh
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/openwsman/ssleay.cnf
 %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/openwsman
