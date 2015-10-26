@@ -13,12 +13,12 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.4.12
-Release:	2
+Version:	2.6.2
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	4893a41c6fd89b33095c315c79638a75
+# Source0-md5:	221163800046cca5ddb38868d3f82d7e
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-java.patch
 Patch2:		rdoc-rubygems.patch
@@ -43,10 +43,10 @@ BuildRequires:	rpmbuild(macros) >= 1.606
 %{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
 %{?with_cim:BuildRequires:	sblim-sfcc-devel}
 BuildRequires:	sed >= 4.0
-BuildRequires:	swig >= 1.3.30
-%{?with_perl:BuildRequires:	swig-perl >= 1.3.30}
-%{?with_python:BuildRequires:	swig-python >= 1.3.30}
-%{?with_ruby:BuildRequires:	swig-ruby >= 1.3.30}
+BuildRequires:	swig >= 2.0.5
+%{?with_perl:BuildRequires:	swig-perl >= 2.0.5}
+%{?with_python:BuildRequires:	swig-python >= 2.0.5}
+%{?with_ruby:BuildRequires:	swig-ruby >= 2.0.5}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -217,7 +217,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libwsman.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman.so.1
 %attr(755,root,root) %{_libdir}/libwsman_client.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.2
+%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.4
 %attr(755,root,root) %{_libdir}/libwsman_clientpp.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman_clientpp.so.1
 %attr(755,root,root) %{_libdir}/libwsman_curl_client_transport.so.*.*.*
@@ -256,6 +256,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with ruby}
 %files -n ruby-openwsman
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/winrs.rb
 %{ruby_vendorlibdir}/openwsmanplugin.rb
 %{ruby_vendorlibdir}/openwsman.rb
 %{ruby_vendorlibdir}/openwsman

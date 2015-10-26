@@ -1,8 +1,10 @@
---- openwsman-2.4.6/bindings/ruby/rdoc2.0~	2014-05-20 10:54:21.000000000 +0300
-+++ openwsman-2.4.6/bindings/ruby/rdoc2.0	2014-08-11 00:05:27.200706518 +0300
-@@ -1,4 +1,5 @@
- #!/usr/bin/env ruby
-+require 'rubygems'
- require 'rdoc'
+--- openwsman-2.6.2/bindings/ruby/rdoc.orig	2015-10-19 15:27:46.000000000 +0200
++++ openwsman-2.6.2/bindings/ruby/rdoc	2015-10-26 18:55:14.754207569 +0100
+@@ -40,6 +40,7 @@
+   if major == 1 && minor == 8
+     require 'parse_swig.rb' # load the swig parser
+   else
++    require 'rubygems'
+     require 'rdoc'
  
- require 'rdoc/encoding'
+     require 'rdoc/encoding'
