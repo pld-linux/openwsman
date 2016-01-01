@@ -11,3 +11,25 @@
      MESSAGE(STATUS "Found PythonLibs...")
      FIND_PACKAGE(PythonLinkLibs)
      IF (PYTHON_LINK_LIBS)
+--- openwsman-2.6.2/src/plugins/swig/python/CMakeLists.txt~	2015-10-19 15:27:46.000000000 +0200
++++ openwsman-2.6.2/src/plugins/swig/python/CMakeLists.txt	2015-12-31 16:50:25.747677518 +0100
+@@ -9,7 +9,7 @@
+ 
+ FIND_PACKAGE(PythonInterp REQUIRED)
+ 
+-EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from distutils import sysconfig; stdout.write(sysconfig.get_python_lib())" OUTPUT_VARIABLE PYTHON_LIB_DIR)
++EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from distutils import sysconfig; stdout.write(sysconfig.get_python_lib(plat_specific=True,prefix='/usr'))" OUTPUT_VARIABLE PYTHON_LIB_DIR)
+ 
+ IF (NOT PYTHON_SITE_DIR)
+   SET (PYTHON_SITE_DIR ${PYTHON_LIB_DIR})
+--- openwsman-2.6.2/bindings/python/CMakeLists.txt~	2015-10-19 15:27:46.000000000 +0200
++++ openwsman-2.6.2/bindings/python/CMakeLists.txt	2016-01-01 12:55:29.513957706 +0100
+@@ -12,7 +12,7 @@
+ 
+ add_subdirectory(tests)
+ 
+-EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)" OUTPUT_VARIABLE PYTHON_LIB_DIR)
++EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(plat_specific=True,prefix='/usr')" OUTPUT_VARIABLE PYTHON_LIB_DIR)
+ STRING(REPLACE "\n" "" PYTHON_LIB_DIR "${PYTHON_LIB_DIR}")
+ 
+ MESSAGE(STATUS "Python executable: ${PYTHON_EXECUTABLE}")
