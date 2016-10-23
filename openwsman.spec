@@ -13,16 +13,15 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.6.2
-Release:	6
+Version:	2.6.3
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	221163800046cca5ddb38868d3f82d7e
+# Source0-md5:	a14cec2a892a30e055edac36071d8972
 Patch0:		%{name}-link.patch
-Patch1:		%{name}-java.patch
-Patch2:		rdoc-rubygems.patch
-Patch3:		%{name}-python.patch
+Patch1:		rdoc-rubygems.patch
+Patch2:		%{name}-python.patch
 URL:		https://github.com/Openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
@@ -153,7 +152,6 @@ Wiązania języka Ruby do bibliotek openwsman.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 install -d build
@@ -256,7 +254,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with ruby}
 %files -n ruby-openwsman
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/winrs.rb
+%attr(755,root,root) %{_bindir}/winrs
 %{ruby_vendorlibdir}/openwsmanplugin.rb
 %{ruby_vendorlibdir}/openwsman.rb
 %{ruby_vendorlibdir}/openwsman
