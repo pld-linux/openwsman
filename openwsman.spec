@@ -13,16 +13,14 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.6.5
-Release:	3
+Version:	2.6.9
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	84d066233a0b9d6ef00657dc8241d353
-Patch0:		%{name}-link.patch
-Patch1:		rdoc-rubygems.patch
-Patch2:		%{name}-python.patch
-Patch3:		openssl.patch
+# Source0-md5:	82f0cdab1ccbad847e994ed6f4c19b01
+Patch0:		rdoc-rubygems.patch
+Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
 BuildRequires:	cmake >= 2.4
 BuildRequires:	curl-devel >= 7.12.0
@@ -152,8 +150,6 @@ Wiązania języka Ruby do bibliotek openwsman.
 %undos src/cpp/CMakeLists.txt
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 install -d build
@@ -167,6 +163,7 @@ cd build
 	%{!?with_cim:-DBUILD_LIBCIM=NO} \
 	%{!?with_perl:-DBUILD_PERL=NO} \
 	%{!?with_python:-DBUILD_PYTHON=NO} \
+	-DBUILD_PYTHON3=NO \
 	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
 	-DPYTHON_EXECUTABLE=%{__python} \

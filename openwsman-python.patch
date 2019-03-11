@@ -11,10 +11,10 @@
    SET (PYTHON_SITE_DIR ${PYTHON_LIB_DIR})
 --- openwsman-2.6.5/bindings/python/CMakeLists.txt.orig	2017-11-28 09:32:15.000000000 +0100
 +++ openwsman-2.6.5/bindings/python/CMakeLists.txt	2018-09-03 21:47:58.258854144 +0200
-@@ -13,9 +13,9 @@
- add_subdirectory(tests)
- 
- set(Python_ADDITIONAL_VERSIONS 3.6 3.5 2.7 2.6)
+@@ -17,9 +17,9 @@
+ ELSE( BUILD_PYTHON3 )
+ set(Python_ADDITIONAL_VERSIONS 2.7 2.6)
+ ENDIF( BUILD_PYTHON3 )
 +FIND_PACKAGE(PythonInterp REQUIRED)
  FIND_PACKAGE(PythonLibs)
  IF (PYTHON_LIBRARY)
@@ -22,7 +22,7 @@
    #MESSAGE(STATUS "Found PythonLibs...")
    FIND_PACKAGE(PythonLinkLibs)
    #IF (PYTHON_LINK_LIBS)
-@@ -25,7 +25,7 @@
+@@ -29,7 +29,7 @@
    MESSAGE(STATUS "No Python found")
  ENDIF (PYTHON_LIBRARY)
  
