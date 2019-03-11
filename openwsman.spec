@@ -14,7 +14,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.6.9
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -49,7 +49,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # plugins use symbols from libraries, client libs have circular dependencies with libwsman
-%define		skip_post_check_so	.*%{_libdir}/openwsman/.* libwsman_client.so.* libwsman_curl_client_transport.so.* libwsman_server.so.1.0.0 libwsman_clientpp.so.1.0.0
+%define		skip_post_check_so	.*%{_libdir}/openwsman/.* libwsman_client.so.* libwsman_curl_client_transport.so.* libwsman_server.so.1.0.0 libwsman_clientpp.so.1.0.0 libwsman.so.1.0.0
 
 %description
 Openwsman is a project intended to provide an open-source
