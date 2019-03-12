@@ -7,9 +7,15 @@
 %bcond_without	cim	# CIM plugin (sblim-sfcc based)
 %bcond_without	java	# Java bindings
 %bcond_without	perl	# Perl bindings
-%bcond_without	python	# Python bindings
+%bcond_without	python	# Python bindings (any)
+%bcond_without	python2	# Python 2.x bindings
+%bcond_without	python3	# Python 3.x bindings
 %bcond_without	ruby	# Ruby bindings
 
+%if %{without python}
+%undefine	with_python2
+%undefine	with_python3
+%endif
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
@@ -22,7 +28,7 @@ Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{ve
 Patch0:		rdoc-rubygems.patch
 Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
-BuildRequires:	cmake >= 2.4
+BuildRequires:	cmake >= 2.6
 BuildRequires:	curl-devel >= 7.12.0
 %if %{with ruby}
 %if %(locale -a | grep -q '^en_US$'; echo $?)
@@ -36,7 +42,8 @@ BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 BuildRequires:	pkgconfig
-%{?with_python:BuildRequires:	python-devel >= 2}
+%{?with_python2:BuildRequires:	python-devel >= 2}
+%{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
 BuildRequires:	rpmbuild(macros) >= 1.606
 %{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
 %{?with_cim:BuildRequires:	sblim-sfcc-devel}
@@ -120,17 +127,30 @@ Perl bindings for openwsman libraries.
 Wiązania Perla do bibliotek openwsman.
 
 %package -n python-openwsman
-Summary:	Python bindings for openwsman libraries
-Summary(pl.UTF-8):	Wiązania Pythona do bibliotek openwsman
+Summary:	Python 2 bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania Pythona 2 do bibliotek openwsman
 Group:		Libraries/Python
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	python-libs
 
 %description -n python-openwsman
-Python bindings for openwsman libraries.
+Python 2 bindings for openwsman libraries.
 
 %description -n python-openwsman -l pl.UTF-8
-Wiązania Pythona do bibliotek openwsman.
+Wiązania Pythona 2 do bibliotek openwsman.
+
+%package -n python3-openwsman
+Summary:	Python 3 bindings for openwsman libraries
+Summary(pl.UTF-8):	Wiązania Pythona 3 do bibliotek openwsman
+Group:		Libraries/Python
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	python3-libs >= 1:3.2
+
+%description -n python3-openwsman
+Python 3 bindings for openwsman libraries.
+
+%description -n python3-openwsman -l pl.UTF-8
+Wiązania Pythona 3 do bibliotek openwsman.
 
 %package -n ruby-openwsman
 Summary:	Ruby bindings for openwsman libraries
@@ -158,31 +178,59 @@ cd build
 %if %{with java}
 	-DJAVA_INCLUDE_PATH=%{java_home}/include \
 %else
-	-DBUILD_JAVA=NO \
+	-DBUILD_JAVA=OFF \
 %endif
-	%{!?with_cim:-DBUILD_LIBCIM=NO} \
-	%{!?with_perl:-DBUILD_PERL=NO} \
-	%{!?with_python:-DBUILD_PYTHON=NO} \
-	-DBUILD_PYTHON3=NO \
-	-DBUILD_RUBY=%{!?with_ruby:NO}%{?with_ruby:YES} \
+	%{!?with_cim:-DBUILD_LIBCIM=OFF} \
+	%{!?with_perl:-DBUILD_PERL=OFF} \
+	%{!?with_python2:-DBUILD_PYTHON=OFF} \
+	-DBUILD_PYTHON3=OFF \
+	-DBUILD_RUBY=%{!?with_ruby:OFF}%{?with_ruby:ON} \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
-	-DPYTHON_EXECUTABLE=%{__python} \
+	%{?with_python2:-DPYTHON_EXECUTABLE=%{__python}} \
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON
 
 # ruby .gemspec contains non-ascii characters, build fails with C locale
 %{?with_ruby:LC_ALL=en_US} \
 %{__make} -j1
 
+cd ..
+
+%if %{with python3}
+install -d build-python3
+cd build-python3
+%cmake .. \
+	-DBUILD_JAVA=OFF \
+	%{!?with_cim:-DBUILD_LIBCIM=ON} \
+	-DBUILD_PERL=OFF \
+	-DBUILD_PYTHON=OFF \
+	-DBUILD_PYTHON3=ON \
+	-DBUILD_RUBY=OFF \
+	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
+	-DPYTHON_EXECUTABLE=%{__python3}
+
+%{__make} -j1
+%endif
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/var/lib/openwsman/subscriptions
 
+%if %{with python3}
+%{__make} -C build-python3 install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
+%py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
+%endif
+
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+%if %{with python2}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -245,10 +293,20 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorlib}/openwsman.pm
 %attr(755,root,root) %{perl_vendorarch}/openwsman.so
 
+%if %{with python2}
 %files -n python-openwsman
 %defattr(644,root,root,755)
 %{py_sitedir}/pywsman.py[co]
 %attr(755,root,root) %{py_sitedir}/_pywsman.so
+%endif
+
+%if %{with python3}
+%files -n python3-openwsman
+%defattr(644,root,root,755)
+%{py3_sitedir}/pywsman.py
+%{py3_sitedir}/__pycache__/pywsman.cpython-*.py[co]
+%attr(755,root,root) %{py3_sitedir}/_pywsman.so
+%endif
 
 %if %{with ruby}
 %files -n ruby-openwsman
