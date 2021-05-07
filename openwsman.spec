@@ -20,7 +20,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.6.11
-Release:	2
+Release:	3
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/releases
