@@ -19,13 +19,13 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.6.11
-Release:	6
+Version:	2.6.13
+Release:	1
 License:	BSD
 Group:		Libraries
-#Source0Download: https://github.com/Openwsman/openwsman/releases
+#Source0Download: https://github.com/Openwsman/openwsman/tags
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	33a58eb6b13ffe0a51b33553f6cd5728
+# Source0-md5:	554dfa649b39df2a14334aaeb32b7dba
 Patch0:		rdoc-rubygems.patch
 Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
@@ -94,7 +94,7 @@ Summary:	Header files for openwsman
 Summary(pl.UTF-8):	Pliki nagłówkowe openwsman
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Obsoletes:	openwsman-static
+Obsoletes:	openwsman-static < 2.2
 
 %description devel
 Header files for openwsman.
@@ -286,7 +286,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with java}
 %files -n java-openwsman
 %defattr(644,root,root,755)
-%{_javadir}/openwsman-%{_target_cpu}-%{version}.jar
+%{_javadir}/openwsman-%{_target_cpu}-2.6.12.jar
 %endif
 
 %files -n perl-openwsman
