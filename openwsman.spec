@@ -19,13 +19,13 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.6.13
-Release:	2
+Version:	2.7.1
+Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/tags
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	554dfa649b39df2a14334aaeb32b7dba
+# Source0-md5:	08f8f42d6bd5dd0498ab28b8bc5442e6
 Patch0:		rdoc-rubygems.patch
 Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
@@ -263,7 +263,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libwsman.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman.so.1
 %attr(755,root,root) %{_libdir}/libwsman_client.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.4
+%attr(755,root,root) %ghost %{_libdir}/libwsman_client.so.5
 %attr(755,root,root) %{_libdir}/libwsman_clientpp.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libwsman_clientpp.so.1
 %attr(755,root,root) %{_libdir}/libwsman_curl_client_transport.so.*.*.*
@@ -286,7 +286,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with java}
 %files -n java-openwsman
 %defattr(644,root,root,755)
-%{_javadir}/openwsman-%{_target_cpu}-2.6.12.jar
+%{_javadir}/openwsman-%{_target_cpu}-%{version}.jar
 %endif
 
 %files -n perl-openwsman
