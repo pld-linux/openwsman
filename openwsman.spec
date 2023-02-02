@@ -19,13 +19,13 @@
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
-Version:	2.7.1
-Release:	2
+Version:	2.7.2
+Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/tags
 Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	08f8f42d6bd5dd0498ab28b8bc5442e6
+# Source0-md5:	98b3cb081eb387998565ce23fed4f7ec
 Patch0:		rdoc-rubygems.patch
 Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
