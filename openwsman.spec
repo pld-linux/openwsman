@@ -16,6 +16,9 @@
 %undefine	with_python2
 %undefine	with_python3
 %endif
+
+%{?with_java:%{?use_default_jdk}}
+
 Summary:	Implementation of the Web Services Management specification (WS-Management)
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
@@ -36,7 +39,7 @@ BuildRequires:	curl-devel >= 7.12.0
 BuildRequires:	glibc-localedb-all
 %endif
 %endif
-BuildRequires:	jdk
+%{?with_java:%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk}}
 BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	openssl-devel
@@ -45,7 +48,7 @@ BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 %{?with_python2:BuildRequires:	python-devel >= 2}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
-BuildRequires:	rpmbuild(macros) >= 1.606
+BuildRequires:	rpmbuild(macros) >= 2.021
 %{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
 %{?with_cim:BuildRequires:	sblim-sfcc-devel}
 BuildRequires:	sed >= 4.0
@@ -177,6 +180,7 @@ install -d build
 cd build
 %cmake .. \
 %if %{with java}
+	-DJAVA_HOME:PATH="%{java_home}" \
 	-DJAVA_INCLUDE_PATH=%{java_home}/include \
 %else
 	-DBUILD_JAVA=OFF \
