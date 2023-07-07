@@ -32,7 +32,7 @@ Source0:	https://github.com/Openwsman/openwsman/archive/v%{version}/%{name}-%{ve
 Patch0:		rdoc-rubygems.patch
 Patch1:		%{name}-python.patch
 URL:		https://github.com/Openwsman
-BuildRequires:	cmake >= 2.6
+BuildRequires:	cmake >= 2.8.12
 BuildRequires:	curl-devel >= 7.12.0
 %if %{with ruby}
 %if %(locale -a | grep -q '^en_US$'; echo $?)
