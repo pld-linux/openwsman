@@ -47,7 +47,9 @@ BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 BuildRequires:	pkgconfig
 %{?with_python2:BuildRequires:	python-devel >= 2}
+%{?with_python2:BuildRequires:	python-modules >= 2}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
+%{?with_python3:BuildRequires:	python3-modules >= 1:3.2}
 BuildRequires:	rpmbuild(macros) >= 2.021
 %{?with_ruby:BuildRequires:	ruby-devel >= 1.9}
 %{?with_cim:BuildRequires:	sblim-sfcc-devel}
