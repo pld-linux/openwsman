@@ -39,7 +39,7 @@ BuildRequires:	curl-devel >= 7.12.0
 BuildRequires:	glibc-localedb-all
 %endif
 %endif
-%{?with_java:%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk}}
+%{?with_java:%buildrequires_jdk}
 BuildRequires:	libstdc++-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	openssl-devel
