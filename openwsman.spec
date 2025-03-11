@@ -174,8 +174,8 @@ Wiązania języka Ruby do bibliotek openwsman.
 %prep
 %setup -q
 %undos src/cpp/CMakeLists.txt
-%patch0 -p1
-%patch1 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
 
 %build
 install -d build
