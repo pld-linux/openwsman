@@ -181,6 +181,7 @@ Wiązania języka Ruby do bibliotek openwsman.
 install -d build
 cd build
 %cmake .. \
+	-DCMAKE_C_FLAGS="%{rpmcflags} -Wno-incompatible-pointer-types" \
 %if %{with java}
 	-DJAVA_HOME:PATH="%{java_home}" \
 	-DJAVA_INCLUDE_PATH=%{java_home}/include \
