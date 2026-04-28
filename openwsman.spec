@@ -8,9 +8,9 @@
 %bcond_without	java	# Java bindings
 %bcond_without	perl	# Perl bindings
 %bcond_without	python	# Python bindings (any)
-%bcond_without	python2	# Python 2.x bindings
+%bcond_with	python2	# Python 2.x bindings
 %bcond_without	python3	# Python 3.x bindings
-%bcond_without	ruby	# Ruby bindings
+%bcond_with	ruby	# Ruby bindings
 
 %if %{without python}
 %undefine	with_python2
@@ -23,7 +23,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.7.2
-Release:	6
+Release:	7
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/tags
