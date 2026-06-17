@@ -4,7 +4,7 @@
 # - add -module to plugins build?
 #
 # Conditional build:
-%bcond_without	cim	# CIM plugin (sblim-sfcc based)
+%bcond_with	cim	# CIM plugin (sblim-sfcc based)
 %bcond_without	java	# Java bindings
 %bcond_without	perl	# Perl bindings
 %bcond_without	python	# Python bindings (any)
@@ -23,7 +23,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.7.2
-Release:	7
+Release:	8
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/tags
