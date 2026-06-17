@@ -8,12 +8,10 @@
 %bcond_without	java	# Java bindings
 %bcond_without	perl	# Perl bindings
 %bcond_without	python	# Python bindings (any)
-%bcond_with	python2	# Python 2.x bindings
 %bcond_without	python3	# Python 3.x bindings
 %bcond_with	ruby	# Ruby bindings
 
 %if %{without python}
-%undefine	with_python2
 %undefine	with_python3
 %endif
 
@@ -23,7 +21,7 @@ Summary:	Implementation of the Web Services Management specification (WS-Managem
 Summary(pl.UTF-8):	Implementacja specyfikacji Web Services Management (WS-Management)
 Name:		openwsman
 Version:	2.7.2
-Release:	8
+Release:	9
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/Openwsman/openwsman/tags
@@ -46,8 +44,6 @@ BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 BuildRequires:	pkgconfig
-%{?with_python2:BuildRequires:	python-devel >= 2}
-%{?with_python2:BuildRequires:	python-modules >= 2}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
 %{?with_python3:BuildRequires:	python3-modules >= 1:3.2}
 BuildRequires:	rpmbuild(macros) >= 2.021
@@ -190,11 +186,11 @@ cd build
 %endif
 	%{!?with_cim:-DBUILD_LIBCIM=OFF} \
 	%{!?with_perl:-DBUILD_PERL=OFF} \
-	%{!?with_python2:-DBUILD_PYTHON=OFF} \
-	-DBUILD_PYTHON3=OFF \
+	%{cmake_on_off python3 BUILD_PYTHON3} \
+	-DBUILD_PYTHON=OFF \
 	-DBUILD_RUBY=%{!?with_ruby:OFF}%{?with_ruby:ON} \
 	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
-	%{?with_python2:-DPYTHON_EXECUTABLE=%{__python}} \
+	%{?with_python2:-DPYTHON_EXECUTABLE=%{__python3}} \
 	-DRUBY_HAS_VENDOR_RUBY:BOOL=ON
 
 # ruby .gemspec contains non-ascii characters, build fails with C locale
@@ -203,41 +199,16 @@ cd build
 
 cd ..
 
-%if %{with python3}
-install -d build-python3
-cd build-python3
-%cmake .. \
-	-DBUILD_JAVA=OFF \
-	%{!?with_cim:-DBUILD_LIBCIM=ON} \
-	-DBUILD_PERL=OFF \
-	-DBUILD_PYTHON=OFF \
-	-DBUILD_PYTHON3=ON \
-	-DBUILD_RUBY=OFF \
-	-DPACKAGE_ARCHITECTURE=%{_target_cpu} \
-	-DPYTHON_EXECUTABLE=%{__python3}
-
-%{__make} -j1
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/var/lib/openwsman/subscriptions
 
-%if %{with python3}
-%{__make} -C build-python3 install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
-%py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
-%endif
-
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%if %{with python2}
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_postclean
+%if %{with python3}
+%py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
+%py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
 %endif
 
 %clean
@@ -300,13 +271,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{perl_vendorlib}/openwsman.pm
 %attr(755,root,root) %{perl_vendorarch}/openwsman.so
-
-%if %{with python2}
-%files -n python-openwsman
-%defattr(644,root,root,755)
-%{py_sitedir}/pywsman.py[co]
-%attr(755,root,root) %{py_sitedir}/_pywsman.so
-%endif
 
 %if %{with python3}
 %files -n python3-openwsman
